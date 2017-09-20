@@ -21,32 +21,16 @@ int main()
 		}
 	}
 
+	int angle = 0;
+	int elevation = 0;
+	AudioStream a("x1.wav");
+	AudioStream L("HRTFdata/L" + std::to_string(elevation) + "e00" + std::to_string(angle) + "a.wav");
+	AudioStream R("HRTFdata/R" + std::to_string(elevation) + "e00" + std::to_string(angle) + "a.wav");
+
 	float64 sr = 44100.0;
-
-    // Create a new instance of the Sine Generator
-    Sine sine(sr);
-
-    Buffer pan;
-
-    pan << sine.generate(1.0, 3.0);
-
-    // Create a stereo AudioStream.
-    AudioStream as(sr, 2);
-
-    // Fill it with a 220 Hz sine wave.
-    as << 0.5 * sine.generate(4.9, 220);
-
-    // Execute the pan method.
-    as.pan(pan);
-
-    // Write the AudioStream to a wave file
-    as >> "example2.wav";
-
     // Play it through the sound card
-
-    AudioPlayback pb(sr, 2, 16);
-
-    as >> pb;
+	AudioPlayback pb(sr, 2, 16);
+    a >> pb;
 
     return 0;
 }
