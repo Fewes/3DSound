@@ -27,10 +27,22 @@ int main()
 	AudioStream L("HRTFdata/L" + std::to_string(elevation) + "e00" + std::to_string(angle) + "a.wav");
 	AudioStream R("HRTFdata/R" + std::to_string(elevation) + "e00" + std::to_string(angle) + "a.wav");
 
+	Buffer ab("x1.wav");
+	Buffer Lb("HRTFdata/L" + std::to_string(elevation) + "e00" + std::to_string(angle) + "a.wav");
+
+	FFTransform t(44100.0);
+
+	Buffer abf = t.fft(ab);
+	//Buffer Lbf = t.fft(Lb);
+
+	//Buffer resultf = abf*Lb;
+	Buffer result = t.ifft(abf);
+
+
 	float64 sr = 44100.0;
     // Play it through the sound card
 	AudioPlayback pb(sr, 2, 16);
-    a >> pb;
+	R >> pb;
 
     return 0;
 }
