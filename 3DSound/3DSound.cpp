@@ -12,7 +12,8 @@ using namespace Nsound;
 int main()
 {
 	sf::Window window(sf::VideoMode(800, 600), "My window");
-
+	double myints[] = { 2,2,3};
+	std::vector<double> position(myints, myints + sizeof(myints) / sizeof(double));
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -57,7 +58,7 @@ int main()
 	*/
 
 	//SoundNode sound("L:/Erik/Music/Musik/Fronda/Svart Poesi/15 Nu för tiden.wav", vector<double>(0, 3));
-	SoundNode sound("x1.wav", vector<double>(0, 3));
+	SoundNode sound("x1.wav", position);
 	sound.generate3D();
 	AudioStream as(sound.getSampleRate(), 2); //Make a two channel audiostream with right samplerate
 

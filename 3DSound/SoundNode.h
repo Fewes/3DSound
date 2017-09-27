@@ -16,6 +16,7 @@ public:
 	SoundNode(const SoundNode& SN);
 	void setPos(vector<double> pos);
 	void setPos(double x, double y, double z);
+	void calcAngleElev();
 	bool setSound(string filname/*, string filetype*/);
 	void setSound(int freq, double time);
 	AudioStream& getChannel(int channel);
@@ -23,6 +24,7 @@ public:
 	void generate3D();
 	
 private:
+	int angle, elevation;
 	vector<double> position;
 	AudioStream leftEar;
 	AudioStream rightEar;
