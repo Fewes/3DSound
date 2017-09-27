@@ -6,6 +6,9 @@
 #include <Nsound/NsoundAll.h>
 #include <iostream>
 
+#define CHL_L 0
+#define CHL_R 1
+
 using namespace std;
 using namespace Nsound;
 using namespace sf;
@@ -23,11 +26,12 @@ public:
 	AudioStream& getChannel(int channel);
 	float64& getSampleRate();
 	void generate3D();
+	void buildSound();
 	
 private:
 	Vector3f position;
 	AudioStream leftEar;
 	AudioStream rightEar;
 	float64 sr;
-	
+
 };

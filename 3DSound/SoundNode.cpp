@@ -40,8 +40,8 @@ bool SoundNode::setSound(string filname)
 	AudioStream audio(filname); //Trycatch?
 	sr = audio.getSampleRate();
 	if (audio.getNChannels() == 2) {
-		leftEar << audio[0];
-		rightEar << audio[1];
+		leftEar << audio[CHL_L];
+		rightEar << audio[CHL_R];
 	}else {
 		audio.mono();
 		leftEar << audio;
@@ -82,6 +82,45 @@ void SoundNode::generate3D()
 	Buffer Rb("HRTFdata/R" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for right channel at the right ang and ev
 	leftEar.convolve(Lb); //Make a convolution on leftaudio with leftchannel hrft;
 	rightEar.convolve(Rb); //Make a convolution on rightaudio with rightchannel hrft; 
+}
+
+
+
+void conv(float64 sample, Buffer outbuffer, int i, int channel) {
+	/*Faltningsfunktionen
+	ladda falt fil blalbabla
+	*/
+	Buffer HRFT;
+	if (channel == 0) {
+		HRFT = ("HRTFdata/L" + std::to_string(90) + "e0" + std::to_string(-40) + "a.wav");
+	}else {
+		HRFT = ("HRTFdata/R" + std::to_string(90) + "e0" + std::to_string(-40) + "a.wav");
+	}
+	
+	for (int j = 0; j < HRFT.getLength() && j + i < outbuffer.getLength; j++) {
+		outbuffer[i + j] += sample * HRFT[j];
+	}
+}
+
+void SoundNode::buildSound()
+{
+	Buffer rightbuffer = rightEar[0];
+	Buffer leftbuffer = leftEar[0];
+	Buffer rightOutbuff = rightbuffer*0.0; // Alocate the output Buffer will all zeros.
+	Buffer leftOutbuff = leftbuffer*0.0; // Alocate the output Buffer will all zeros.
+	int rnumSampels = rightbuffer.getLength();
+	int lnumSampels = leftbuffer.getLength();
+
+	for (int i = 0; i < rnumSampels; i++) {
+		//Här ska allt som ska göras med ljudet göras
+		//För att falta
+		conv(rightbuffer[i], rightOutbuff, i, CHL_R); //rightoutbuff ska skickas som reference
+	}
+	for (int i = 0; i < lnumSampels; i++) {
+		//Här ska allt som ska göras med ljudet göras
+		//För att falta
+		conv(leftbuffer[i], leftOutbuff, i, CHL_L); //leftoutbuff ska skickas som reference
+	}
 }
 
 
