@@ -45,6 +45,7 @@ int main()
         if (ImGui::Button("Generate 3D Sound"))
 		{
 			SoundNode sound("x1.wav", vector<double>(0, 3));
+			AudioPlayback pb(sound.getSampleRate(), 2, 16);
 			sound.generate3D();
 			// Make a two channel AudioStream with right samplerate
 			AudioStream as(sound.getSampleRate(), 2);
@@ -53,9 +54,6 @@ int main()
 			as[0] << sound.getChannel(0);
 			// Assign right sound to the left (AudioStream[1]) buffer in AudioStream
 			as[1] << sound.getChannel(1);
-
-			// Make a playback "source" that plays two channels and has right samplerate and 16bit/sample
-			AudioPlayback pb(sound.getSampleRate(), 2, 16);
 
 			// Play the AudioStream in the AudioPlayback
 			as >> pb;
