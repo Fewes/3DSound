@@ -6,10 +6,10 @@
 SoundNode::SoundNode()
 {
 	this->setSound(440, 10);
-	this->setPos(vector<double> (1,3));
+	this->setPos(Vector3f(0,0,0));
 }
 
-SoundNode::SoundNode(string filname, vector<double> pos)
+SoundNode::SoundNode(string filname, Vector3f pos)
 {
 	this->setSound(filname);
 	this->setPos(pos);
@@ -23,16 +23,16 @@ SoundNode::SoundNode(const SoundNode& SN)
 	this->sr = SN.sr;
 }
 
-void SoundNode::setPos(vector<double> pos)
+void SoundNode::setPos(Vector3f pos)
 {
 	position = pos;
 }
 
-void SoundNode::setPos(double x, double y, double z)
+void SoundNode::setPos(float x, float y, float z)
 {
-	position[0] = x;
-	position[1] = y;
-	position[2] = z;
+	position.x = x;
+	position.y = y;
+	position.z = z;
 }
 
 bool SoundNode::setSound(string filname)

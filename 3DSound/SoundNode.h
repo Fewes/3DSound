@@ -2,20 +2,22 @@
 
 #include <vector>
 #include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include <Nsound/NsoundAll.h>
 #include <iostream>
 
 using namespace std;
 using namespace Nsound;
+using namespace sf;
 
 class SoundNode
 {
 public:
 	SoundNode();
-	SoundNode(string filname, vector<double> pos);
+	SoundNode(string filname, Vector3f pos);
 	SoundNode(const SoundNode& SN);
-	void setPos(vector<double> pos);
-	void setPos(double x, double y, double z);
+	void setPos(Vector3f pos);
+	void setPos(float x, float y, float z);
 	bool setSound(string filname/*, string filetype*/);
 	void setSound(int freq, double time);
 	AudioStream& getChannel(int channel);
@@ -23,8 +25,9 @@ public:
 	void generate3D();
 	
 private:
-	vector<double> position;
+	Vector3f position;
 	AudioStream leftEar;
 	AudioStream rightEar;
 	float64 sr;
+	
 };
