@@ -3,8 +3,6 @@
 #include <experimental/filesystem> 
 #include <string>
 
-
-
 SoundNode::SoundNode()
 {
 	this->setSound(440, 10);
@@ -36,9 +34,11 @@ void SoundNode::setPos(float x, float y, float z)
 	position.y = y;
 	position.z = z;
 }
-void SoundNode::calcAngleElev() {
-	this->angle = round(atan(asin(position[0]) / acos(position[1])));
-	this->elevation = round(atan(asin(position[2]) / acos(angle)));
+
+void SoundNode::calcAngleElev()
+{
+	this->angle = round(atan(asin(position.x) / acos(position.y)));
+	this->elevation = round(atan(asin(position.z) / acos(angle)));
 }
 
 bool SoundNode::setSound(string filname)
