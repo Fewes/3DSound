@@ -77,9 +77,9 @@ float64& SoundNode::getSampleRate()
 void SoundNode::generate3D()
 {
 	int angle = 90; //Hardcoded angle (to the right)
-	int elevation = -40; //Hardcoded evelation (level zero)
-	Buffer Lb("HRTFdata/L" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for left channel at the right ang and ev
-	Buffer Rb("HRTFdata/R" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for right channel at the right ang and ev
+	int elevation = 0; //Hardcoded evelation (level zero)
+	Buffer Lb("HRTFdata/elev0/L" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for left channel at the right ang and ev
+	Buffer Rb("HRTFdata/elev0/R" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for right channel at the right ang and ev
 	leftEar.convolve(Lb); //Make a convolution on leftaudio with leftchannel hrft;
 	rightEar.convolve(Rb); //Make a convolution on rightaudio with rightchannel hrft; 
 }
@@ -97,7 +97,7 @@ void conv(float64 sample, Buffer outbuffer, int i, int channel) {
 		HRFT = ("HRTFdata/R" + std::to_string(90) + "e0" + std::to_string(-40) + "a.wav");
 	}
 	
-	for (int j = 0; j < HRFT.getLength() && j + i < outbuffer.getLength; j++) {
+	for (int j = 0; j < HRFT.getLength() && (j + i) < outbuffer.getLength(); j++) {
 		outbuffer[i + j] += sample * HRFT[j];
 	}
 }
