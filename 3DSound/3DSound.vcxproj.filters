@@ -30,6 +30,15 @@
     <ClInclude Include="SoundNode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="HRTFCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -49,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="..\imgui\imgui-SFML.cpp">
       <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="HRTFCache.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
