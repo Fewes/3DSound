@@ -5,9 +5,12 @@
 #include <SFML/System.hpp>
 #include <Nsound/NsoundAll.h>
 #include <iostream>
+#include <math.h>  
 
 #define CHL_L 0
 #define CHL_R 1
+#define PI_ 3.1415
+#define Io_ pow(10, -12)
 
 using namespace std;
 using namespace Nsound;
@@ -23,15 +26,19 @@ public:
 	void setPos(float x, float y, float z);
 	bool setSound(string filname/*, string filetype*/);
 	void setSound(int freq, double time);
-	AudioStream& getChannel(int channel);
+	Buffer& getChannel(int channel);
 	float64& getSampleRate();
-	void generate3D();
+	//void generate3D();
 	void buildSound();
 	
 private:
 	Vector3f position;
-	AudioStream leftEar;
-	AudioStream rightEar;
+	Buffer leftEar;
+	Buffer rightEar;
 	float64 sr;
+	Buffer HRFTl; //Temp
+	Buffer HRFTr; //Temp
+	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
+	float64 getAmpchange();
 
 };
