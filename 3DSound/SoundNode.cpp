@@ -89,8 +89,8 @@ void SoundNode::generate3D()
 void SoundNode::buildSound()
 {
 
-	HRFTl = ("HRTFdata/elev0/L" + std::to_string(0) + "e" + std::to_string(180) + "a.wav");
-	HRFTr = ("HRTFdata/elev0/R" + std::to_string(0) + "e" + std::to_string(180) + "a.wav");
+	HRFTl = ("HRTF/L/" + std::to_string(0) + "/" + std::to_string(180) + ".wav");
+	HRFTr = ("HRTF/R/" + std::to_string(0) + "/" + std::to_string(180) + ".wav");
 
 	rightEar[0];
 	leftEar[0];

@@ -59,9 +59,9 @@ int main()
         ImGui::Begin("Amazing 3D Sound Generator");
 			if (ImGui::Button("Generate 3D Sound"))
 			{
-				SoundNode sound("x1.wav", Vector3f(0, 3, 0));
+				SoundNode sound("x1.wav", Vector3f(0, 1, 0));
 				AudioPlayback pb(sound.getSampleRate(), 2, 16);
-				sound.generate3D();
+				sound.buildSound();
 				// Make a two channel AudioStream with right samplerate
 				AudioStream as(sound.getSampleRate(), 2);
 
