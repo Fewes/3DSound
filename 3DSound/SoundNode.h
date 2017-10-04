@@ -24,21 +24,28 @@ public:
 	SoundNode(const SoundNode& SN);
 	void setPos(Vector3f pos);
 	void setPos(float x, float y, float z);
+	void setEndPos(Vector3f pos);
+	void setEndPos(float x, float y, float z);
 	bool setSound(string filname/*, string filetype*/);
 	void setSound(int freq, double time);
 	Buffer& getChannel(int channel);
 	float64& getSampleRate();
 	//void generate3D();
-	void buildSound();
+	void buildSound(Vector3f lisnrPos);
 	
 private:
 	Vector3f position;
+	Vector3f startPos;
+	Vector3f endPos;
+	Vector3f speed;
 	Buffer leftEar;
 	Buffer rightEar;
 	float64 sr;
 	Buffer HRFTl; //Temp
 	Buffer HRFTr; //Temp
 	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
-	float64 getAmpchange();
+	void setSpeed();
+	void updatePos(int x);
+	float64 getAmpchange(Vector3f lisnrPos);
 
 };

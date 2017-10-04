@@ -59,9 +59,10 @@ int main()
         ImGui::Begin("Amazing 3D Sound Generator");
 			if (ImGui::Button("Generate 3D Sound"))
 			{
-				SoundNode sound("x1.wav", Vector3f(0, 1, 0));
+				SoundNode sound("x1.wav", Vector3f(1, 1, 1));
+				sound.setEndPos(Vector3f(-1, -1, -1));
 				AudioPlayback pb(sound.getSampleRate(), 2, 16);
-				sound.buildSound();
+				sound.buildSound(Vector3f(0, 0, 0));
 				// Make a two channel AudioStream with right samplerate
 				AudioStream as(sound.getSampleRate(), 2);
 
@@ -73,6 +74,7 @@ int main()
 				// Play the AudioStream in the AudioPlayback
 				as >> pb;
 			}
+
 			ImGui::DragFloat3("Listener Position",	listenerPos, sliderSens);
 			ImGui::SliderFloat("Listener Angle", &listenerAngle, -180, 180);
 			listenerDir[0] = cos(listenerAngle * DEGTORAD);
