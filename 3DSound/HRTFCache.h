@@ -19,7 +19,7 @@ public:
 	
 private:
 	void InitializeCache();
-	void LoadElevation(vector<Nsound::Buffer>& buf, int elevation, int channel);
+	void LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channel channel);
 
 	vector<vector<Nsound::Buffer>> rEar;
 	vector<vector<Nsound::Buffer>> lEar;

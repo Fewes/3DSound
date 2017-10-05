@@ -13,19 +13,19 @@ void HRTFCache::InitializeCache()
 	lEar.resize(19);
 	rEar.resize(19);
 	for (int i = 0; i < lEar.size(); i++)
-		LoadElevation(lEar[i], -90 + 10 * i, CHL_L);
+		LoadElevation(lEar[i], -90 + 10 * i, Left);
 	for (int i = 0; i < rEar.size(); i++)
-		LoadElevation(rEar[i], -90 + 10 * i, CHL_R);
+		LoadElevation(rEar[i], -90 + 10 * i, Right);
 }
 
-void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, int channel)
+void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channel channel)
 {
 	// Since there is no HRTF data for elevation angles smaller than -40°, we clamp those angles to use the -40° data
 	int elev = elevation < -40 ? -40 : elevation;
 
 	// Look up the right directory
 	string dirname = "HRTF/";
-		   dirname += channel == 0 ? "L/" : "R/";
+		   dirname += channel == Left ? "L/" : "R/";
 		   dirname += to_string(elev) + "/";
 
 	DIR *dir;
