@@ -54,13 +54,14 @@ Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channe
 {
 	// Direction from listener to source
 	vec3 dir = Normalize(srcPos - lisPos);
+	lisDir = Normalize(lisDir);
 
 	// Calculate elevation angle
 	vec3 dProj = Project(dir, vec3(0, 0, 1));
 	float elevation = Angle(dir, dProj) * sign(dir.z);
 
 	// Calculate listener "right" direction (assume up is (0, 0, 1))
-	vec3 r = Cross(Normalize(lisDir), vec3(0, 0, 1));
+	vec3 r = Cross(lisDir, vec3(0, 0, 1));
 	float pan;
 	if (PointSide(r, lisPos - srcPos))
 		pan = Angle(lisDir, dProj);
