@@ -75,6 +75,10 @@ Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channe
 		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
 		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
 
+		// Pan wraparound
+		if (panIndex >= rEar[elevIndex].size())
+			panIndex = 0;
+
 		return &rEar[elevIndex][panIndex];
 	}
 	else
@@ -82,6 +86,10 @@ Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channe
 		// Calculate elevation/pan index
 		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
 		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
+
+		// Pan wraparound
+		if (panIndex >= rEar[elevIndex].size())
+			panIndex = 0;
 
 		return &lEar[elevIndex][panIndex];
 	}
