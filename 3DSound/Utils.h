@@ -11,6 +11,12 @@
 #define CHL_L 0
 #define CHL_R 1
 
+enum Channel
+{
+	Right,
+	Left
+};
+
 typedef sf::Vector3f vec3;
 
 // Normalize a vector
@@ -56,9 +62,8 @@ inline vec3 a2v(float f[])
 }
 
 // Check which side of a plane a point lies
-inline bool PointSide(vec3 a, vec3 n, vec3 b)
+inline bool PointSide(vec3 n, vec3 a)
 {
-	vec3 ab = a - b;
-	float dot = Dot(ab, n);
+	float dot = Dot(-a, n);
 	return dot > 0;
 }

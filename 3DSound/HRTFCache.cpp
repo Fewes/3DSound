@@ -47,22 +47,40 @@ void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, int ch
 	cout << "HRTF " << (channel == 0 ? "(CHL_L)" : "(CHL_R)") << " elev " << elevation << " initialized with " << buf.size() << " impulse response(s) " << endl;
 }
 
-Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, float& elevation, float& pan)
+Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel)
 {
 	// Direction from listener to source
 	vec3 dir = Normalize(srcPos - lisPos);
+
 	// Calculate elevation angle
 	vec3 dProj = Project(dir, vec3(0, 0, 1));
-	elevation = Angle(dir, dProj) * sign(dir.z);
+	float elevation = Angle(dir, dProj) * sign(dir.z);
 
 	// Calculate listener "right" direction (assume up is (0, 0, 1))
 	vec3 r = Cross(Normalize(lisDir), vec3(0, 0, 1));
-	if (PointSide(lisPos, r, srcPos))
+	float pan;
+	if (PointSide(r, lisPos - srcPos))
 		pan = Angle(lisDir, dProj);
 	else
 		pan = 360 - Angle(lisDir, dProj);
 
-	return nullptr;
+	// Look up right/left channel
+	if (channel == Right)
+	{
+		// Calculate elevation/pan index
+		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
+		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
+
+		return &rEar[elevIndex][panIndex];
+	}
+	else
+	{
+		// Calculate elevation/pan index
+		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
+		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
+
+		return &lEar[elevIndex][panIndex];
+	}
 }
 
 void HRTFCache::ls()

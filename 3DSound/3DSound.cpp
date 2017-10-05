@@ -34,8 +34,12 @@ int main()
 	float listenerAngle = 0;
 	float soundPos[3] {2, 0, 0};
 
+	/*
 	float elev = 0;
 	float pan = 0;
+	int elevIndex = 0;
+	int panIndex = 0;
+	*/
 
 	const float sliderSens = 0.001f;
 
@@ -82,9 +86,13 @@ int main()
 			listenerDir[2] = 0;
 			ImGui::DragFloat3("Sound Position",		soundPos,	 sliderSens);
 
-			hrtfCache.GetHRTF(a2v(listenerPos), Normalize(a2v(listenerDir)), a2v(soundPos), elev, pan);
+			hrtfCache.GetHRTF(a2v(listenerPos), Normalize(a2v(listenerDir)), a2v(soundPos), Right);
+			/*
 			ImGui::LabelText("Elevation", to_string(elev).c_str());
 			ImGui::LabelText("Pan", to_string(pan).c_str());
+			ImGui::LabelText("Elevation Index", to_string(elevIndex).c_str());
+			ImGui::LabelText("Pan Index", to_string(panIndex).c_str());
+			*/
         ImGui::End();
 
 		// Draw stuff
