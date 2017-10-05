@@ -7,13 +7,14 @@ SoundNode::SoundNode()
 {
 	this->setSound(440, 10);
 	this->setPos(Vector3f(0,0,0));
-
+	this->setEndPos(Vector3f(0, 0, 0));
 }
 
 SoundNode::SoundNode(string filname, Vector3f pos)
 {
 	this->setSound(filname);
 	this->setPos(pos);
+	this->setEndPos(pos);
 
 }
 
@@ -22,17 +23,24 @@ SoundNode::SoundNode(const SoundNode& SN)
 	this->leftEar = SN.leftEar;
 	this->rightEar = SN.rightEar;
 	this->startPos = SN.startPos;
+	this->endPos = SN.endPos;
 	this->sr = SN.sr;
 }
 
 void SoundNode::setPos(Vector3f pos)
 {
+	if (startPos == endPos) {
+		setEndPos(pos);
+	}
 	startPos = pos;
 	setSpeed();
 }
 
 void SoundNode::setPos(float x, float y, float z)
 {
+	if (startPos == endPos) {
+		setEndPos(x, y, z);
+	}
 	startPos.x = x;
 	startPos.y = y;
 	startPos.z = z;
@@ -121,26 +129,23 @@ void SoundNode::generate3D()
 void SoundNode::buildSound(Vector3f lisnrPos)
 {
 
-	HRFTl = ("HRTF/L/" + std::to_string(0) + "/" + std::to_string(180) + ".wav"); //Temps
-	HRFTr = ("HRTF/R/" + std::to_string(0) + "/" + std::to_string(180) + ".wav"); //Temps
-
-	//position = startPos;
-
-	//rightEar[0];
-	//leftEar[0];
+	HRFTl = ("HRTF/L/" + std::to_string(0) + "/0" + std::to_string(90) + ".wav"); //Temps
+	HRFTr = ("HRTF/R/" + std::to_string(0) + "/0" + std::to_string(90) + ".wav"); //Temps
+	
 	Buffer rightOutbuff = rightEar*0.0; // Alocate the output Buffer will all zeros.
 	Buffer leftOutbuff = leftEar*0.0; // Alocate the output Buffer will all zeros.
-	int rnumSampels = rightEar.getLength();
+	int rnumSampels = rightEar.getLength();//Sen ska den längsta tas
 	int lnumSampels = leftEar.getLength();
 
-	for (int i = 0; i < rnumSampels; i++) {
+	for (int i = 0; i < rnumSampels; i++) { //Left och right channels ska göras samtidigt i framtiden. 
 		//Här ska allt som ska göras med ljudet göras
 		//För att falta
 		updatePos(i);
 		conv(rightEar[i], rightOutbuff, i, CHL_R, HRFTr);
-
+		
 		//cout << "Before: " << rightOutbuff[i] << endl;
-		rightOutbuff[i] = rightOutbuff[i]*getAmpchange(lisnrPos);
+		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
+		rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
 		//cout << "After: " << rightOutbuff[i] << endl;
 	}
 	cout << "right done" << endl;
@@ -151,7 +156,8 @@ void SoundNode::buildSound(Vector3f lisnrPos)
 		updatePos(i);
 		conv(leftEar[i], leftOutbuff, i, CHL_L, HRFTl);
 
-		leftOutbuff[i] = leftOutbuff[i]*getAmpchange(lisnrPos);
+		//leftOutbuff[i] = leftOutbuff[i] * getAmpchange(lisnrPos);
+		leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);
 	}
 	cout << "left done" << endl;
 
@@ -166,11 +172,14 @@ void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buf
 	}
 }
 
-float64 SoundNode::getAmpchange(Vector3f lisnrPos) //not physically correct but works for now
+float64 SoundNode::getAmpchange(Vector3f lisnrPos, float64 sample) //not physically correct but works for now
 {
 	float distance = sqrt(pow(position.x - lisnrPos.x, 2) + pow(position.y - lisnrPos.y, 2) + pow(position.z - lisnrPos.z, 2));
+
+	float L2 = 20*log10(sample) - abs((20 * log10(pow((0.1 / distance),2))));
+	L2 = pow(10, L2 / 20);
 	//float I = 1 / (pow(distance, 2)*PI_ * 4);
-	return 1 / pow(distance, 2);//10 * log(I / Io_);
+	return L2;//10 * log(I / Io_);
 }
 
 
