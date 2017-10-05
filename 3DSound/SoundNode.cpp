@@ -65,16 +65,12 @@ void SoundNode::setSpeed() {
 	speed.y = (endPos.y - startPos.y) / rightEar.getLength();
 	speed.z = (endPos.z - startPos.z) / rightEar.getLength();
 
-	//cout << "| x:" << speed.x << "| y:" << speed.y << "| z: " << speed.z << endl;
 }
 
-void SoundNode::updatePos(int x)
+void SoundNode::updatePos()
 {
-	position.x = startPos.x + speed.x * x;
-	position.y = startPos.y + speed.y * x;
-	position.z = startPos.z + speed.z * x;
+	position += speed;
 
-	//cout << "| x:" << position.x << "| y:" << position.y << "| z: " << position.z << endl;
 }
 
 bool SoundNode::setSound(string filname)
@@ -90,16 +86,12 @@ bool SoundNode::setSound(string filname)
 		rightEar << audio;
 	}
 
-	//leftEar.mono();
-	//rightEar.mono();
-	//leftEar.normalize(); //Not sure if we really wants to do that
-	//rightEar.normalize();
 	return true; //TODO send false if sound isnt loaded
 }
 
 void SoundNode::setSound(int freq, double time)
 {
-	
+	//impl freq wave
 }
 
 Buffer& SoundNode::getChannel(int channel)
@@ -115,61 +107,40 @@ float64& SoundNode::getSampleRate()
 {
 	return sr;
 }
-/*
-void SoundNode::generate3D()
-{
-	int angle = 90; //Hardcoded angle (to the right)
-	int elevation = 0; //Hardcoded evelation (level zero)
-	Buffer Lb("HRTFdata/elev0/L" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for left channel at the right ang and ev
-	Buffer Rb("HRTFdata/elev0/R" + std::to_string(elevation) + "e0" + std::to_string(angle) + "a.wav"); //Load hrftdata for right channel at the right ang and ev
-	leftEar.convolve(Lb); //Make a convolution on leftaudio with leftchannel hrft;
-	rightEar.convolve(Rb); //Make a convolution on rightaudio with rightchannel hrft; 
-}
-*/
-void SoundNode::buildSound(Vector3f lisnrPos)
+
+
+void SoundNode::buildSound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache)
 {
 
-	HRFTl = ("HRTF/L/" + std::to_string(0) + "/0" + std::to_string(90) + ".wav"); //Temps
-	HRFTr = ("HRTF/R/" + std::to_string(0) + "/0" + std::to_string(90) + ".wav"); //Temps
-	
 	Buffer rightOutbuff = rightEar*0.0; // Alocate the output Buffer will all zeros.
 	Buffer leftOutbuff = leftEar*0.0; // Alocate the output Buffer will all zeros.
-	int rnumSampels = rightEar.getLength();//Sen ska den längsta tas
+	int rnumSampels = rightEar.getLength();//Sen ska den kortaste tas
 	int lnumSampels = leftEar.getLength();
+	position = startPos;
 
-	for (int i = 0; i < rnumSampels; i++) { //Left och right channels ska göras samtidigt i framtiden. 
+	for (int i = 0; i < rnumSampels; i++) {
 		//Här ska allt som ska göras med ljudet göras
 		//För att falta
-		updatePos(i);
-		conv(rightEar[i], rightOutbuff, i, CHL_R, HRFTr);
-		
-		//cout << "Before: " << rightOutbuff[i] << endl;
+		updatePos();
+		conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(lisnrPos, listenerDir, position, Right));
+		conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(lisnrPos, listenerDir, position, Left));
+
 		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
-		rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
-		//cout << "After: " << rightOutbuff[i] << endl;
-	}
-	cout << "right done" << endl;
-
-	for (int i = 0; i < lnumSampels; i++) {
-		//Här ska allt som ska göras med ljudet göras
-		//För att falta
-		updatePos(i);
-		conv(leftEar[i], leftOutbuff, i, CHL_L, HRFTl);
-
+		//rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
 		//leftOutbuff[i] = leftOutbuff[i] * getAmpchange(lisnrPos);
-		leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);
+		//leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);		
 	}
-	cout << "left done" << endl;
-
+	
 	rightEar = rightOutbuff;
 	leftEar = leftOutbuff;
 }
 
-void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer & HRFT)
+void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer* HRFT)
 {
-	for (int j = 0; j < HRFT.getLength() && (j + i) < outbuffer.getLength(); j++) {
-		outbuffer[i + j] += sample * HRFT[j];
+	for (int j = 0; j < HRFT->getLength() && (j + i) < outbuffer.getLength(); j++) {
+		outbuffer[i + j] += sample * (*HRFT)[j];
 	}
+	
 }
 
 float64 SoundNode::getAmpchange(Vector3f lisnrPos, float64 sample) //not physically correct but works for now

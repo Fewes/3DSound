@@ -6,6 +6,7 @@
 #include <Nsound/NsoundAll.h>
 #include <iostream>
 #include <math.h>  
+#include "HRTFCache.h"
 
 #define CHL_L 0
 #define CHL_R 1
@@ -30,8 +31,7 @@ public:
 	void setSound(int freq, double time);
 	Buffer& getChannel(int channel);
 	float64& getSampleRate();
-	//void generate3D();
-	void buildSound(Vector3f lisnrPos);
+	void buildSound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache);
 	
 private:
 	Vector3f position;
@@ -41,11 +41,9 @@ private:
 	Buffer leftEar;
 	Buffer rightEar;
 	float64 sr;
-	Buffer HRFTl; //Temp
-	Buffer HRFTr; //Temp
-	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
+	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer* HRFT);
 	void setSpeed();
-	void updatePos(int x);
+	void updatePos();
 	float64 getAmpchange(Vector3f lisnrPos, float64 sample);
 
 };
