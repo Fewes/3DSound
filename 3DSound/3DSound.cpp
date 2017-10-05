@@ -145,7 +145,7 @@ int main()
 				SoundNode sound("x1.wav", a2v(soundPos));
 				sound.setEndPos(Vector3f(-1, -1, -1));
 				sound.setPos(a2v(soundPos));
-				sound.buildSound(a2v(listenerPos), Normalize(a2v(listenerDir)), &hrtfCache);
+				sound.buildSound(&(a2v(listenerPos)), &(Normalize(a2v(listenerDir))), &hrtfCache);
 				// Make a two channel AudioStream with right samplerate
 				AudioStream as(sound.getSampleRate(), 2);
 				// Assign left sound to the left (AudioStream[0]) buffer in AudioStream 

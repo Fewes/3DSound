@@ -31,7 +31,7 @@ public:
 	void setSound(int freq, double time);
 	Buffer& getChannel(int channel);
 	float64& getSampleRate();
-	void buildSound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache);
+	void buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache* hrtfCache);
 	
 private:
 	Vector3f position;

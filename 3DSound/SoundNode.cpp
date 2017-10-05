@@ -109,7 +109,7 @@ float64& SoundNode::getSampleRate()
 }
 
 
-void SoundNode::buildSound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache)
+void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache* hrtfCache)
 {
 
 	Buffer rightOutbuff = rightEar*0.0; // Alocate the output Buffer will all zeros.
@@ -122,8 +122,8 @@ void SoundNode::buildSound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* h
 		//Här ska allt som ska göras med ljudet göras
 		//För att falta
 		updatePos();
-		conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(lisnrPos, listenerDir, position, Right));
-		conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(lisnrPos, listenerDir, position, Left));
+		conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
+		conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
 
 		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
 		//rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
