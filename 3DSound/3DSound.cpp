@@ -8,11 +8,29 @@
 #include <iostream>
 #include <imgui.h>
 #include <imgui-SFML.h>
+#include <thread>  
 
 #include "HRTFCache.h"
 
 using namespace Nsound;
 using namespace sf;
+
+void startfixingsound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache, SoundNode* sound) {
+	
+
+	sound->buildSound(&lisnrPos, &listenerDir, hrtfCache);
+	
+	// Make a two channel AudioStream with right samplerate
+	AudioStream as(sound->getSampleRate(), 2);
+	
+	// Assign left sound to the left (AudioStream[0]) buffer in AudioStream 
+	as[0] << sound->getChannel(0);
+	// Assign right sound to the left (AudioStream[1]) buffer in AudioStream
+	as[1] << sound->getChannel(1);
+	// Play the AudioStream in the AudioPlayback
+	AudioPlayback pb(sound->getSampleRate(), 2, 16);
+	as >> pb;
+}
 
 int main()
 {
@@ -34,6 +52,8 @@ int main()
 	float listenerAngle = 0;
 	float soundPos[3] {2, 0, 0};
 	float soundEndPos[3]{ 2, 0, 0 };
+	thread* soundthread;
+	SoundNode* sound;
 
 	/*
 	float elev = 0;
@@ -148,19 +168,11 @@ int main()
 
 			if (ImGui::Button("Generate 3D Sound"))
 			{
-				SoundNode sound("x1.wav", a2v(soundPos));
-				sound.setEndPos(a2v(soundEndPos));
-				sound.setPos(a2v(soundPos));
-				sound.buildSound(&(a2v(listenerPos)), &(Normalize(a2v(listenerDir))), &hrtfCache);
-				// Make a two channel AudioStream with right samplerate
-				AudioStream as(sound.getSampleRate(), 2);
-				// Assign left sound to the left (AudioStream[0]) buffer in AudioStream 
-				as[0] << sound.getChannel(0);
-				// Assign right sound to the left (AudioStream[1]) buffer in AudioStream
-				as[1] << sound.getChannel(1);
-				// Play the AudioStream in the AudioPlayback
-				AudioPlayback pb(sound.getSampleRate(), 2, 16);
-				as >> pb;
+				sound = new SoundNode("x1.wav", a2v(soundPos));
+				sound->setEndPos(a2v(soundEndPos));
+				sound->setPos(a2v(soundPos));
+				//sound.buildSound(&(a2v(listenerPos)), &(Normalize(a2v(listenerDir))), &hrtfCache);
+				soundthread = new thread( startfixingsound, (a2v(listenerPos)), (Normalize(a2v(listenerDir))), &hrtfCache, sound);
 			}
 
 			hrtfCache.GetHRTF(a2v(listenerPos), Normalize(a2v(listenerDir)), a2v(soundPos), Right);
