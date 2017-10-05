@@ -114,13 +114,13 @@ int main()
 			listenerAngle += 360;
 		if (Keyboard::isKeyPressed(Keyboard::Up)	|| Keyboard::isKeyPressed(Keyboard::W))
 		{
-			listenerSprite.move(VecFromAng(listenerSprite.getRotation() - 90) * 2.f * dt);
+			listenerSprite.move(VecFromAng(listenerSprite.getRotation()) * 2.f * dt);
 			listenerPos[0] = listenerSprite.getPosition().x;
 			listenerPos[1] = listenerSprite.getPosition().y;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Down)	|| Keyboard::isKeyPressed(Keyboard::S))
 		{
-			listenerSprite.move(-VecFromAng(listenerSprite.getRotation() - 90) * 2.f * dt);
+			listenerSprite.move(-VecFromAng(listenerSprite.getRotation()) * 2.f * dt);
 			listenerPos[0] = listenerSprite.getPosition().x;
 			listenerPos[1] = listenerSprite.getPosition().y;
 		}
@@ -136,7 +136,7 @@ int main()
 			listenerDir[1] = sin(listenerAngle * DEGTORAD);
 			listenerDir[2] = 0;
 			ImGui::DragFloat3("Sound Position",		soundPos,	 sliderSens);
-			ImGui::Checkbox("View Position Follows Listener", &viewFollowsListener);
+			ImGui::Checkbox("View Follows Listener", &viewFollowsListener);
 
 			ImGui::Spacing();
 
@@ -175,6 +175,10 @@ int main()
 		else
 			vp = viewPos;
 		view.reset(sf::FloatRect(vp.x - viewExtents.x * 0.5f, vp.y - viewExtents.y * 0.5f, viewExtents.x, viewExtents.y));
+		if (viewFollowsListener)
+			view.setRotation(listenerSprite.getRotation());
+		else
+			view.setRotation(0);
 		window.setView(view);
 
 		// Update sprite transforms
