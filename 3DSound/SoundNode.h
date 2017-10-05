@@ -44,6 +44,6 @@ private:
 	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer* HRFT);
 	void setSpeed();
 	void updatePos();
-	float64 getAmpchange(Vector3f lisnrPos, float64 sample);
+	float64 getAmpchange(Vector3f* lisnrPos, float64 sample);
 
 };

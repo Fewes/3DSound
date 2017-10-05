@@ -33,6 +33,7 @@ int main()
 	float listenerDir[3] {1, 0, 0};
 	float listenerAngle = 0;
 	float soundPos[3] {2, 0, 0};
+	float soundEndPos[3]{ 2, 0, 0 };
 
 	/*
 	float elev = 0;
@@ -41,21 +42,25 @@ int main()
 	int panIndex = 0;
 	*/
 
-	Texture listenerTex, soundTex;
+	Texture listenerTex, soundTex, soundEndTex;
 	listenerTex.loadFromFile("Sprites/Listener.png");
 	soundTex.loadFromFile("Sprites/Sound.png");
-	Sprite listenerSprite, soundSprite;
+	soundEndTex.loadFromFile("Sprites/SoundEnd.png");
+	Sprite listenerSprite, soundSprite, soundEndSprite;
 	listenerSprite.setTexture(listenerTex);
 	soundSprite.setTexture(soundTex);
+	soundEndSprite.setTexture(soundEndTex);
 
 	listenerSprite.setOrigin(listenerTex.getSize().x * 0.5f, listenerTex.getSize().y * 0.5f);
 	soundSprite.setOrigin(soundTex.getSize().x * 0.5f, soundTex.getSize().y * 0.5f);
+	soundEndSprite.setOrigin(soundEndTex.getSize().x * 0.5f, soundEndTex.getSize().y * 0.5f);
 
 	float ppm = 512; // Texture pixels per meter
 	float ppmInv = 1 / ppm;
 
 	listenerSprite.setScale(ppmInv, ppmInv);
 	soundSprite.setScale(ppmInv, ppmInv);
+	soundEndSprite.setScale(ppmInv, ppmInv);
 
 	sf::View view;
 	vec2 viewPos = vec2(0, 0);
@@ -136,6 +141,7 @@ int main()
 			listenerDir[1] = sin(listenerAngle * DEGTORAD);
 			listenerDir[2] = 0;
 			ImGui::DragFloat3("Sound Position",		soundPos,	 sliderSens);
+			ImGui::DragFloat3("Soundend Position", soundEndPos, sliderSens);
 			ImGui::Checkbox("View Follows Listener", &viewFollowsListener);
 
 			ImGui::Spacing();
@@ -143,7 +149,7 @@ int main()
 			if (ImGui::Button("Generate 3D Sound"))
 			{
 				SoundNode sound("x1.wav", a2v(soundPos));
-				sound.setEndPos(Vector3f(-1, -1, -1));
+				sound.setEndPos(a2v(soundEndPos));
 				sound.setPos(a2v(soundPos));
 				sound.buildSound(&(a2v(listenerPos)), &(Normalize(a2v(listenerDir))), &hrtfCache);
 				// Make a two channel AudioStream with right samplerate
@@ -184,11 +190,13 @@ int main()
 		listenerSprite.setPosition(vec2(listenerPos[0], listenerPos[1]));
 		listenerSprite.setRotation(listenerAngle);
 		soundSprite.setPosition(vec2(soundPos[0], soundPos[1]));
+		soundEndSprite.setPosition(vec2(soundEndPos[0], soundEndPos[1]));
 
 		// Draw stuff
 		window.clear(Color(46, 46, 46, 255));
 		window.draw(listenerSprite);
 		window.draw(soundSprite);
+		window.draw(soundEndSprite);
         ImGui::SFML::Render(window);
         window.display();
 

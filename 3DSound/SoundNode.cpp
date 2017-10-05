@@ -128,7 +128,11 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
 		//rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
 		//leftOutbuff[i] = leftOutbuff[i] * getAmpchange(lisnrPos);
-		//leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);		
+		//leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);	
+		//cout << "Before: " << rightOutbuff[i] << endl;
+		rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
+		//cout << "After: " << rightOutbuff[i] << endl;
+		leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);	
 	}
 	
 	rightEar = rightOutbuff;
@@ -143,14 +147,49 @@ void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buf
 	
 }
 
-float64 SoundNode::getAmpchange(Vector3f lisnrPos, float64 sample) //not physically correct but works for now
+float64 SoundNode::getAmpchange(Vector3f* lisnrPos, float64 sample) //not physically correct but works for now
 {
-	float distance = sqrt(pow(position.x - lisnrPos.x, 2) + pow(position.y - lisnrPos.y, 2) + pow(position.z - lisnrPos.z, 2));
+	float distance = sqrt(pow(position.x - lisnrPos->x, 2) + pow(position.y - lisnrPos->y, 2) + pow(position.z - lisnrPos->z, 2));
+	float64 a1 = 1.0f;
 
+	/*
 	float L2 = 20*log10(sample) - abs((20 * log10(pow((0.1 / distance),2))));
 	L2 = pow(10, L2 / 20);
 	//float I = 1 / (pow(distance, 2)*PI_ * 4);
-	return L2;//10 * log(I / Io_);
+	//10 * log(I / Io_);
+	
+
+	
+
+	if (distance >= 1) {
+		sample *= (1 / distance);
+	}
+	else {
+
+	}*/
+
+	//cout << "first: " << sample;
+	//sample += 1;
+	bool isNeg = (sample < 0);
+	sample = abs(sample);
+
+	//cout << " after +1: " << sample;
+	//sample = pow(10, (20 * log10(sample) - 20 * log10(0.1 / distance)) / 20);
+	sample = 20 * log10(sample/a1);
+	//cout << " after dB: " << sample;
+	sample -= abs(20 * log10(0.1 / distance));
+	//cout << " after negative dist: " << sample;
+	sample = a1 * pow(10, sample / 20);
+	//cout << " after dB^-1: " << sample;
+	//sample -= 1;
+	if (isNeg) {
+		sample *= -1;
+	}
+	//cout << " result: " << sample << endl;
+
+	
+
+	return sample;
 }
 
 
