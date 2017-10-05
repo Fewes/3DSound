@@ -10,12 +10,15 @@ HRTFCache::HRTFCache()
 
 void HRTFCache::InitializeCache()
 {
+	cout << "Initializing HRTF cache.";
 	lEar.resize(19);
 	rEar.resize(19);
 	for (int i = 0; i < lEar.size(); i++)
 		LoadElevation(lEar[i], -90 + 10 * i, Left);
+	cout << ".";
 	for (int i = 0; i < rEar.size(); i++)
 		LoadElevation(rEar[i], -90 + 10 * i, Right);
+	cout << ".done!" << endl;
 }
 
 void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channel channel)
@@ -44,7 +47,7 @@ void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channe
 		}
 	}
 
-	cout << "HRTF " << (channel == 0 ? "(CHL_L)" : "(CHL_R)") << " elev " << elevation << " initialized with " << buf.size() << " impulse response(s) " << endl;
+	//cout << "HRTF " << (channel == 0 ? "(CHL_L)" : "(CHL_R)") << " elev " << elevation << " initialized with " << buf.size() << " impulse response(s) " << endl;
 }
 
 Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel)

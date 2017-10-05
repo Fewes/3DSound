@@ -18,6 +18,8 @@ enum Channel
 };
 
 typedef sf::Vector3f vec3;
+typedef sf::Vector2f vec2;
+typedef sf::Vector2i vec2i;
 
 // Normalize a vector
 inline vec3 Normalize(vec3 v)
@@ -29,6 +31,12 @@ inline vec3 Normalize(vec3 v)
 inline float sign(float f)
 {
 	return f < 0 ? -1 : 1;
+}
+
+// Get a normalized vector from angle a (degrees)
+inline vec2 VecFromAng(float a)
+{
+	return vec2 (cos(a * DEGTORAD), sin(a * DEGTORAD));
 }
 
 // Dot product

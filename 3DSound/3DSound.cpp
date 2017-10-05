@@ -41,11 +41,35 @@ int main()
 	int panIndex = 0;
 	*/
 
+	Texture listenerTex, soundTex;
+	listenerTex.loadFromFile("Sprites/Listener.png");
+	soundTex.loadFromFile("Sprites/Sound.png");
+	Sprite listenerSprite, soundSprite;
+	listenerSprite.setTexture(listenerTex);
+	soundSprite.setTexture(soundTex);
+
+	listenerSprite.setOrigin(listenerTex.getSize().x * 0.5f, listenerTex.getSize().y * 0.5f);
+	soundSprite.setOrigin(soundTex.getSize().x * 0.5f, soundTex.getSize().y * 0.5f);
+
+	float ppm = 512; // Texture pixels per meter
+	float ppmInv = 1 / ppm;
+
+	listenerSprite.setScale(ppmInv, ppmInv);
+	soundSprite.setScale(ppmInv, ppmInv);
+
+	sf::View view;
+	vec2 viewPos = vec2(0, 0);
+	float viewScale = 0.01f;
+	bool viewFollowsListener = false;
+
 	const float sliderSens = 0.001f;
+
+	vec2i lastMousePos;
 
 	while (window.isOpen())
 	{
-		Time dt = clock.restart();
+		Time elapsed = clock.restart();
+		float dt = elapsed.asSeconds();
 
 		Event event;
 		while (window.pollEvent(event))
@@ -55,12 +79,67 @@ int main()
 
 			if (event.type == Event::Closed)
 				window.close();
+			else if (event.type == sf::Event::MouseWheelMoved)
+            {
+				if (event.mouseWheel.delta > 0)
+                    viewScale /= 1.25;
+				else
+					viewScale *= 1.25;
+            }
+			else if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::F)
+				{
+					viewPos = vec2(0, 0);
+					viewScale = 0.01f;
+				}
+			}
+		}
+
+		vec2i mousePos = Mouse::getPosition(window);
+		vec2i diff = mousePos - lastMousePos;
+		vec2 diffScaled = vec2(diff.x * viewScale, diff.y * viewScale);
+		if (Mouse::isButtonPressed(Mouse::Right) || Mouse::isButtonPressed(Mouse::Middle))
+		{
+			viewPos -= diffScaled;
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Left)  || Keyboard::isKeyPressed(Keyboard::A))
+			listenerAngle -= 270 * dt;
+		if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
+			listenerAngle += 270 * dt;
+		while (listenerAngle > 180)
+			listenerAngle -= 360;
+		while (listenerAngle < -180)
+			listenerAngle += 360;
+		if (Keyboard::isKeyPressed(Keyboard::Up)	|| Keyboard::isKeyPressed(Keyboard::W))
+		{
+			listenerSprite.move(VecFromAng(listenerSprite.getRotation() - 90) * 2.f * dt);
+			listenerPos[0] = listenerSprite.getPosition().x;
+			listenerPos[1] = listenerSprite.getPosition().y;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Down)	|| Keyboard::isKeyPressed(Keyboard::S))
+		{
+			listenerSprite.move(-VecFromAng(listenerSprite.getRotation() - 90) * 2.f * dt);
+			listenerPos[0] = listenerSprite.getPosition().x;
+			listenerPos[1] = listenerSprite.getPosition().y;
 		}
 
 		// Update ImGui
-		ImGui::SFML::Update(window, dt);
+		ImGui::SFML::Update(window, elapsed);
 
         ImGui::Begin("Amazing 3D Sound Generator");
+			ImGui::Spacing();
+			ImGui::DragFloat3("Listener Position",	listenerPos, sliderSens);
+			ImGui::SliderFloat("Listener Angle", &listenerAngle, -180, 180);
+			listenerDir[0] = cos(listenerAngle * DEGTORAD);
+			listenerDir[1] = sin(listenerAngle * DEGTORAD);
+			listenerDir[2] = 0;
+			ImGui::DragFloat3("Sound Position",		soundPos,	 sliderSens);
+			ImGui::Checkbox("View Position Follows Listener", &viewFollowsListener);
+
+			ImGui::Spacing();
+
 			if (ImGui::Button("Generate 3D Sound"))
 			{
 				SoundNode sound("x1.wav", Vector3f(1, 1, 1));
@@ -79,13 +158,6 @@ int main()
 				as >> pb;
 			}
 
-			ImGui::DragFloat3("Listener Position",	listenerPos, sliderSens);
-			ImGui::SliderFloat("Listener Angle", &listenerAngle, -180, 180);
-			listenerDir[0] = cos(listenerAngle * DEGTORAD);
-			listenerDir[1] = sin(listenerAngle * DEGTORAD);
-			listenerDir[2] = 0;
-			ImGui::DragFloat3("Sound Position",		soundPos,	 sliderSens);
-
 			hrtfCache.GetHRTF(a2v(listenerPos), Normalize(a2v(listenerDir)), a2v(soundPos), Right);
 			/*
 			ImGui::LabelText("Elevation", to_string(elev).c_str());
@@ -95,10 +167,30 @@ int main()
 			*/
         ImGui::End();
 
+		// Update view transform
+		vec2 viewExtents = vec2(window.getSize().x * viewScale, window.getSize().y * viewScale);
+		vec2 vp;
+		if (viewFollowsListener)
+			vp = listenerSprite.getPosition();
+		else
+			vp = viewPos;
+		view.reset(sf::FloatRect(vp.x - viewExtents.x * 0.5f, vp.y - viewExtents.y * 0.5f, viewExtents.x, viewExtents.y));
+		window.setView(view);
+
+		// Update sprite transforms
+		listenerSprite.setPosition(vec2(listenerPos[0], listenerPos[1]));
+		listenerSprite.setRotation(listenerAngle);
+		soundSprite.setPosition(vec2(soundPos[0], soundPos[1]));
+
 		// Draw stuff
 		window.clear(Color(46, 46, 46, 255));
+		window.draw(listenerSprite);
+		window.draw(soundSprite);
         ImGui::SFML::Render(window);
         window.display();
+
+		// Update history
+		lastMousePos = mousePos;
 	}
 
 	// Play nice and kill ImGui before exiting
