@@ -193,7 +193,7 @@ int main()
 			vp = viewPos;
 		view.reset(sf::FloatRect(vp.x - viewExtents.x * 0.5f, vp.y - viewExtents.y * 0.5f, viewExtents.x, viewExtents.y));
 		if (viewFollowsListener)
-			view.setRotation(listenerSprite.getRotation());
+			view.setRotation(listenerSprite.getRotation() + 90);
 		else
 			view.setRotation(0);
 		window.setView(view);
