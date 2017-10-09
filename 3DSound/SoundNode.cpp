@@ -134,7 +134,7 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 		//cout << "After: " << rightOutbuff[i] << endl;
 		leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);	
 	}
-	
+	cout << "done" << endl;
 	rightEar = rightOutbuff;
 	leftEar = leftOutbuff;
 }
@@ -149,8 +149,9 @@ void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buf
 
 float64 SoundNode::getAmpchange(Vector3f* lisnrPos, float64 sample) //not physically correct but works for now
 {
-	float distance = sqrt(pow(position.x - lisnrPos->x, 2) + pow(position.y - lisnrPos->y, 2) + pow(position.z - lisnrPos->z, 2));
+	float64 distance = sqrt(pow(position.x - lisnrPos->x, 2) + pow(position.y - lisnrPos->y, 2) + pow(position.z - lisnrPos->z, 2));
 	float64 a1 = 1.0f;
+	float64 refdist = 0.1;
 
 	/*
 	float L2 = 20*log10(sample) - abs((20 * log10(pow((0.1 / distance),2))));
@@ -177,11 +178,12 @@ float64 SoundNode::getAmpchange(Vector3f* lisnrPos, float64 sample) //not physic
 	//sample = pow(10, (20 * log10(sample) - 20 * log10(0.1 / distance)) / 20);
 	sample = 20 * log10(sample/a1);
 	//cout << " after dB: " << sample;
-	sample -= abs(20 * log10(0.1 / distance));
+	sample -= abs(20 * log10(refdist / max(refdist, distance)));
 	//cout << " after negative dist: " << sample;
 	sample = a1 * pow(10, sample / 20);
-	//cout << " after dB^-1: " << sample;
-	//sample -= 1;
+	//cout << " after dB^-1: " << sample << endl;
+	
+	//om mindre än 0 sätt till noll
 	if (isNeg) {
 		sample *= -1;
 	}

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <math.h>  
 #include "HRTFCache.h"
+#include <algorithm>
 
 #define CHL_L 0
 #define CHL_R 1

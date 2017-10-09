@@ -300,3 +300,5 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
+3DSound/imgui.ini
