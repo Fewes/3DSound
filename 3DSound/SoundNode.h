@@ -42,7 +42,8 @@ private:
 	Buffer leftEar;
 	Buffer rightEar;
 	float64 sr;
-	void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
+	//void conv(float64 sample, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
+	void conv(Buffer* ear, Buffer& outbuffer, int i, int channel, Buffer& HRFT);
 	void setSpeed();
 	void updatePos();
 	float64 getAmpchange(Vector3f* lisnrPos, float64 sample);

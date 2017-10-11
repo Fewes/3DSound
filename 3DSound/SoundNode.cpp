@@ -122,8 +122,10 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 		//Här ska allt som ska göras med ljudet göras
 		//För att falta
 		updatePos();
-		conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
-		conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
+		//conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
+		//conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
+		conv(&rightEar, rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
+		conv(&leftEar, leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
 
 		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
 		//rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
@@ -139,10 +141,15 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 	leftEar = leftOutbuff;
 }
 
-void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer& HRFT)
+//void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer& HRFT)
+void SoundNode::conv(Buffer* ear, Buffer & outbuffer, int i, int channel, Buffer& HRFT)
 {
-	for (int j = 0; j < HRFT.getLength() && (j + i) < outbuffer.getLength(); j++) {
+	/*for (int j = 0; j < HRFT.getLength() && (j + i) < outbuffer.getLength(); j++) {
 		outbuffer[i + j] += sample * HRFT[j];
+	}*/
+
+	for (int j = 0; j <= HRFT.getLength() && i - j >= 0; j++) {
+		outbuffer[i] += (*ear)[i - j] * HRFT[j];
 	}
 	
 }
@@ -152,22 +159,6 @@ float64 SoundNode::getAmpchange(Vector3f* lisnrPos, float64 sample) //not physic
 	float64 distance = sqrt(pow(position.x - lisnrPos->x, 2) + pow(position.y - lisnrPos->y, 2) + pow(position.z - lisnrPos->z, 2));
 	float64 a1 = 1.0f;
 	float64 refdist = 0.1;
-
-	/*
-	float L2 = 20*log10(sample) - abs((20 * log10(pow((0.1 / distance),2))));
-	L2 = pow(10, L2 / 20);
-	//float I = 1 / (pow(distance, 2)*PI_ * 4);
-	//10 * log(I / Io_);
-	
-
-	
-
-	if (distance >= 1) {
-		sample *= (1 / distance);
-	}
-	else {
-
-	}*/
 
 	//cout << "first: " << sample;
 	//sample += 1;
