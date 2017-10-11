@@ -47,11 +47,11 @@ int main()
 	// Initialize HRTF cache
 	HRTFCache hrtfCache;
 
-	float listenerPos[3] {0, 0, 0};
-	float listenerDir[3] {1, 0, 0};
+	float listenerPos[3] { 0, 0, 0 };
+	float listenerDir[3] { 1, 0, 0 };
 	float listenerAngle = 0;
-	float soundPos[3] {2, 0, 0};
-	float soundEndPos[3]{ 2, 0, 0 };
+	float soundPos[3]	{ 2, -2, 0 };
+	float soundEndPos[3]{ 2,  2, 0 };
 	thread* soundthread;
 	SoundNode* sound;
 

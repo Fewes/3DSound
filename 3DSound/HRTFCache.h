@@ -15,7 +15,7 @@ public:
 
 	void ls();
 
-	Nsound::Buffer*		GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel);
+	Nsound::Buffer		GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel);
 	
 private:
 	void InitializeCache();

@@ -139,10 +139,10 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 	leftEar = leftOutbuff;
 }
 
-void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer* HRFT)
+void SoundNode::conv(float64 sample, Buffer & outbuffer, int i, int channel, Buffer& HRFT)
 {
-	for (int j = 0; j < HRFT->getLength() && (j + i) < outbuffer.getLength(); j++) {
-		outbuffer[i + j] += sample * (*HRFT)[j];
+	for (int j = 0; j < HRFT.getLength() && (j + i) < outbuffer.getLength(); j++) {
+		outbuffer[i + j] += sample * HRFT[j];
 	}
 	
 }

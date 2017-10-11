@@ -50,7 +50,7 @@ void HRTFCache::LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channe
 	//cout << "HRTF " << (channel == 0 ? "(CHL_L)" : "(CHL_R)") << " elev " << elevation << " initialized with " << buf.size() << " impulse response(s) " << endl;
 }
 
-Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel)
+Nsound::Buffer HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel)
 {
 	// Direction from listener to source
 	vec3 dir = Normalize(srcPos - lisPos);
@@ -73,25 +73,59 @@ Nsound::Buffer* HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channe
 	{
 		// Calculate elevation/pan index
 		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
-		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
+		// size_t panIndex  = round(pan / 360.f * rEar[elevIndex].size());
 
+		/*
 		// Pan wraparound
 		if (panIndex >= rEar[elevIndex].size())
 			panIndex = 0;
 
-		return &rEar[elevIndex][panIndex];
+		return rEar[elevIndex][panIndex];
+		*/
+
+		// Pan lerp
+		float d = pan / 360.f * rEar[elevIndex].size();
+		size_t panIndexLO = floor(d);
+		size_t panIndexHI = ceil (d);
+		d -= panIndexLO;
+
+		// Wraparound
+		if (panIndexLO >= rEar[elevIndex].size()) panIndexLO = 0;
+		if (panIndexHI >= rEar[elevIndex].size()) panIndexHI = 0;
+
+		// Interpolate between two buffers
+		auto lo = rEar[elevIndex][panIndexLO];
+		auto hi = rEar[elevIndex][panIndexHI];
+		return lo * d + hi * (1 - d);
 	}
 	else
 	{
 		// Calculate elevation/pan index
 		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
-		size_t panIndex = round(pan / 360.f * rEar[elevIndex].size());
+		// size_t panIndex  = round(pan / 360.f * rEar[elevIndex].size());
 
+		/*
 		// Pan wraparound
-		if (panIndex >= rEar[elevIndex].size())
+		if (panIndex >= lEar[elevIndex].size())
 			panIndex = 0;
 
-		return &lEar[elevIndex][panIndex];
+		return lEar[elevIndex][panIndex];
+		*/
+
+		// Pan lerp
+		float d = pan / 360.f * lEar[elevIndex].size();
+		size_t panIndexLO = floor(d);
+		size_t panIndexHI = ceil (d);
+		d -= panIndexLO;
+
+		// Wraparound
+		if (panIndexLO >= lEar[elevIndex].size()) panIndexLO = 0;
+		if (panIndexHI >= lEar[elevIndex].size()) panIndexHI = 0;
+
+		// Interpolate between two buffers
+		auto lo = lEar[elevIndex][panIndexLO];
+		auto hi = lEar[elevIndex][panIndexHI];
+		return lo * d + hi * (1 - d);
 	}
 }
 
