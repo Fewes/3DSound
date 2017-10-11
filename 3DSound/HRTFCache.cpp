@@ -69,7 +69,7 @@ Nsound::Buffer HRTFCache::GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel
 		pan = 360 - Angle(lisDir, dProj);
 
 	// Look up right/left channel
-	if (channel == Right)
+	if ((!invertChannels && channel == Right) || (invertChannels && channel == Left))
 	{
 		// Calculate elevation/pan index
 		size_t elevIndex = round((elevation + 90.f) / 180.f * rEar.size());
