@@ -18,7 +18,7 @@ public:
 	Nsound::Buffer		GetHRTF(vec3 lisPos, vec3 lisDir, vec3 srcPos, Channel channel);
 	
 private:
-	bool invertChannels = true;
+	bool invertChannels = false;
 	void InitializeCache();
 	void LoadElevation(vector<Nsound::Buffer>& buf, int elevation, Channel channel);
 

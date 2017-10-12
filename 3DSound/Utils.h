@@ -21,6 +21,16 @@ typedef sf::Vector3f vec3;
 typedef sf::Vector2f vec2;
 typedef sf::Vector2i vec2i;
 
+inline float lerp(float a, float b, float d)
+{
+	return a * d + b * (1 - d);
+}
+
+inline Nsound::float64 lerp64(Nsound::float64 a, Nsound::float64 b, Nsound::float64 d)
+{
+	return a * d + b * (1 - d);
+}
+
 // Normalize a vector
 inline vec3 Normalize(vec3 v)
 {

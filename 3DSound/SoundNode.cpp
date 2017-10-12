@@ -118,19 +118,31 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 	int lnumSampels = leftEar.getLength();
 	position = startPos;
 
-	for (int i = 0; i < rnumSampels; i++) {
-		//Här ska allt som ska göras med ljudet göras
-		//För att falta
-		updatePos();
-		//conv(rightEar[i], rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
-		//conv(leftEar[i], leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
-		conv(&rightEar, rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
-		conv(&leftEar, leftOutbuff, i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
+	CFSound rEar(&rightEar, &rightOutbuff, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right), 5120);
+	CFSound lEar(&leftEar,  &leftOutbuff,  hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left),  5120);
 
-		//rightOutbuff[i] = rightOutbuff[i] * getAmpchange(lisnrPos);
-		//rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
-		//leftOutbuff[i] = leftOutbuff[i] * getAmpchange(lisnrPos);
-		//leftOutbuff[i] = getAmpchange(lisnrPos, leftOutbuff[i]);	
+	for (int i = 0; i < rnumSampels; i++)
+	{
+		// Här ska allt som ska göras med ljudet göras
+		// För att falta
+		updatePos();
+		// conv(&rightEar, rightOutbuff, i, 0, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right));
+		// conv(&leftEar,  leftOutbuff,  i, 1, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left));
+
+		if (rEar.dirty)
+		{
+			rEar.HRTF2 = hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right);
+			rEar.dirty = false;
+		}
+		if (lEar.dirty)
+		{
+			lEar.HRTF2 = hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left);
+			lEar.dirty = false;
+		}
+
+		rEar.step();
+		lEar.step();
+
 		//cout << "Before: " << rightOutbuff[i] << endl;
 		rightOutbuff[i] = getAmpchange(lisnrPos, rightOutbuff[i]);
 		//cout << "After: " << rightOutbuff[i] << endl;

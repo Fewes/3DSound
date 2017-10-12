@@ -15,9 +15,8 @@
 using namespace Nsound;
 using namespace sf;
 
-void startfixingsound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache, SoundNode* sound) {
-	
-
+void startfixingsound(Vector3f lisnrPos, Vector3f listenerDir, HRTFCache* hrtfCache, SoundNode* sound)
+{
 	sound->buildSound(&lisnrPos, &listenerDir, hrtfCache);
 	
 	// Make a two channel AudioStream with right samplerate
@@ -172,7 +171,9 @@ int main()
 				sound->setEndPos(a2v(soundEndPos));
 				sound->setPos(a2v(soundPos));
 				//sound.buildSound(&(a2v(listenerPos)), &(Normalize(a2v(listenerDir))), &hrtfCache);
-				soundthread = new thread( startfixingsound, (a2v(listenerPos)), (Normalize(a2v(listenerDir))), &hrtfCache, sound);
+				//soundthread = new thread( startfixingsound, (a2v(listenerPos)), (Normalize(a2v(listenerDir))), &hrtfCache, sound);
+
+				startfixingsound( a2v(listenerPos), Normalize(a2v(listenerDir)), &hrtfCache, sound);
 			}
 
 			hrtfCache.GetHRTF(a2v(listenerPos), Normalize(a2v(listenerDir)), a2v(soundPos), Right);
