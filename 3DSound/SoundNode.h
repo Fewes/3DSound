@@ -70,8 +70,6 @@ public:
 
 		float fade = ((float)chunkIndex) / ((float)chunkSize);
 
-		fade = 0;
-
 		(*dst)[sampleIndex] = lerp((*buf1)[sampleIndex], (*buf2)[sampleIndex], 1 - fade);
 
 		sampleIndex++;

@@ -118,8 +118,8 @@ void SoundNode::buildSound(Vector3f* lisnrPos, Vector3f* listenerDir, HRTFCache*
 	int lnumSampels = leftEar.getLength();
 	position = startPos;
 
-	CFSound rEar(&rightEar, &rightOutbuff, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right), 5120);
-	CFSound lEar(&leftEar,  &leftOutbuff,  hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left),  5120);
+	CFSound rEar(&rightEar, &rightOutbuff, hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Right), 512);
+	CFSound lEar(&leftEar,  &leftOutbuff,  hrtfCache->GetHRTF(*lisnrPos, *listenerDir, position, Left),  512);
 
 	for (int i = 0; i < rnumSampels; i++)
 	{
